@@ -2,6 +2,7 @@ package com.mapbox.android.telemetry;
 
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,11 +59,16 @@ class TelemetryLocationEnabler {
   }
 
   private LocationState updateLocationPreferences(LocationState telemetryLocationState) {
-    SharedPreferences sharedPreferences = obtainSharedPreferences();
-    SharedPreferences.Editor editor = sharedPreferences.edit();
+    try {
+      SharedPreferences sharedPreferences = obtainSharedPreferences();
+      SharedPreferences.Editor editor = sharedPreferences.edit();
 
-    editor.putString(MAPBOX_SHARED_PREFERENCE_KEY_TELEMETRY_STATE, telemetryLocationState.name());
-    editor.apply();
+      editor.putString(MAPBOX_SHARED_PREFERENCE_KEY_TELEMETRY_STATE, telemetryLocationState.name());
+      editor.apply();
+    }
+    catch( NullPointerException e ){
+      Log.e("TelemetryClient", "Got a NullPointerException while trying to updateLocationPreferences." + e);
+    }
 
     return telemetryLocationState;
   }
